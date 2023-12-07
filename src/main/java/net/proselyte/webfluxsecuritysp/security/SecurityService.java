@@ -13,20 +13,45 @@ import reactor.core.publisher.Mono;
 
 import java.util.*;
 
+/**
+ * Сервис безопасности для аутентификации пользователей и генерации JWT-токенов.
+ */
 @Component
 @RequiredArgsConstructor
 public class SecurityService {
 
+    /**
+     * Сервис Пользователя.
+     */
     private final UserService userService;
+    /**
+     * Сервис для кодирования паролей.
+     */
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Секрет для генерации подписи JWT.
+     */
     @Value("${jwt.secret}")
     private String secret;
+    /**
+     * Время жизни токена в секундах.
+     */
     @Value("${jwt.expiration}")
     private Integer expirationInSeconds;
+    /**
+     * Издатель токена.
+     */
     @Value("${jwt.issuer}")
     private String issuer;
 
+    /**
+     * Аутентификация пользователя и генерация токена доступа.
+     *
+     * @param username имя пользователя
+     * @param password пароль пользователя
+     * @return Mono с деталями токена доступа
+     */
     public Mono<TokenDetails> authenticate(String username, String password) {
         return userService.getUserByUsername(username)
                 .flatMap(user -> {
@@ -45,6 +70,14 @@ public class SecurityService {
                 .switchIfEmpty(Mono.error(new AuthException("Invalid username", "INVALID_USERNAME")));
     }
 
+    /**
+     * Генерация токена доступа с указанной датой и дополнительными данными.
+     *
+     * @param expirationDate дата истечения срока действия токена
+     * @param claims         дополнительные данные
+     * @param subject        тема токена
+     * @return детали сгенерированного токена
+     */
     private TokenDetails generateToken(Date expirationDate, Map<String, Object> claims, String subject) {
         Date createdDate = new Date();
         String token = Jwts.builder()
@@ -64,6 +97,13 @@ public class SecurityService {
                 .build();
     }
 
+    /**
+     * Генерация токена доступа с дополнительными данными и сроком действия, заданным в секундах.
+     *
+     * @param claims  дополнительные данные
+     * @param subject тема токена
+     * @return детали сгенерированного токена
+     */
     private TokenDetails generateToken(Map<String, Object> claims, String subject) {
         Long expirationTimeInMillis = expirationInSeconds * 1000L;
         Date expirationDate = new Date(new Date().getTime() + expirationTimeInMillis);
@@ -71,6 +111,12 @@ public class SecurityService {
         return generateToken(expirationDate, claims, subject);
     }
 
+    /**
+     * Генерация токена доступа на основе данных пользователя.
+     *
+     * @param user пользователь
+     * @return детали сгенерированного токена
+     */
     private TokenDetails generateToken(UserEntity user) {
         Map<String, Object> claims = new HashMap<>() {{
             put("role", user.getRole());

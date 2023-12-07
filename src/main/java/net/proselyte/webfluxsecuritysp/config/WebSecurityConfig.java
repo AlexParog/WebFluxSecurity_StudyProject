@@ -17,16 +17,32 @@ import org.springframework.security.web.server.authentication.AuthenticationWebF
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 import reactor.core.publisher.Mono;
 
+/**
+ * Класс конфигурации безопасности веб-приложения.
+ */
 @Slf4j
 @Configuration
 @EnableReactiveMethodSecurity
 public class WebSecurityConfig {
 
+    /**
+     * Секрет.
+     */
     @Value("${jwt.secret}")
     private String secret;
 
+    /**
+     * Массив публичных маршрутов, доступных без аутентификации.
+     */
     private final String[] publicRoutes = {"/api/v1/auth/register", "/api/v1/auth/login"};
 
+    /**
+     * Фильтр безопасности для веб-приложения.
+     *
+     * @param http                  объект, представляющий конфигурацию безопасности HTTP
+     * @param authenticationManager менеджер аутентификации
+     * @return SecurityWebFilterChain объект, представляющий цепочку фильтров безопасности
+     */
     @Bean
     public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http,
                                                          AuthenticationManager authenticationManager) {
@@ -54,6 +70,12 @@ public class WebSecurityConfig {
                 .build();
     }
 
+    /**
+     * Создает фильтр аутентификации по Bearer-токену.
+     *
+     * @param authenticationManager менеджер аутентификации
+     * @return AuthenticationWebFilter объект, представляющий фильтр аутентификации
+     */
     private AuthenticationWebFilter bearerAuthenticationFilter(AuthenticationManager authenticationManager) {
         AuthenticationWebFilter bearerAuthenticationWebFilter = new AuthenticationWebFilter(authenticationManager);
         bearerAuthenticationWebFilter.setServerAuthenticationConverter(
@@ -61,7 +83,5 @@ public class WebSecurityConfig {
         bearerAuthenticationWebFilter.setRequiresAuthenticationMatcher(ServerWebExchangeMatchers.pathMatchers("/**"));
 
         return bearerAuthenticationWebFilter;
-
-
     }
 }

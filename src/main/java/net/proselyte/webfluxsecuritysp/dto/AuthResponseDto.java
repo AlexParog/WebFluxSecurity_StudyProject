@@ -9,6 +9,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
+/**
+ * DTO для ответа на запрос аутентификации.
+ */
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
@@ -16,8 +19,23 @@ import java.util.Date;
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class AuthResponseDto {
 
+    /**
+     * Идентификатор пользователя
+     */
     private Long userId;
+
+    /**
+     * JWT-токен для аутентификации
+     */
     private String token;
+
+    /**
+     * Дата и время создания токена
+     */
     private Date issuedAt;
+
+    /**
+     * Дата и время истечения срока действия токена
+     */
     private Date expiresAt;
 }

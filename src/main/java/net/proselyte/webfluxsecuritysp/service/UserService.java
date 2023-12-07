@@ -11,6 +11,9 @@ import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
 
+/**
+ * Сервис для работы с пользователями.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -19,6 +22,12 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    /**
+     * Регистрация пользователя.
+     *
+     * @param user данные нового пользователя
+     * @return объект Mono, представляющий зарегистрированного пользователя
+     */
     public Mono<UserEntity> registerUser(UserEntity user) {
         return userRepository.save(
                 user.toBuilder()
@@ -33,10 +42,22 @@ public class UserService {
         });
     }
 
+    /**
+     * Получение пользователя по его идентификатору.
+     *
+     * @param id идентификатор пользователя
+     * @return объект Mono, представляющий пользователя
+     */
     public Mono<UserEntity> getUserById(Long id) {
         return userRepository.findById(id);
     }
 
+    /**
+     * Получение пользователя по его имени пользователя.
+     *
+     * @param username имя пользователя
+     * @return объект Mono, представляющий пользователя
+     */
     public Mono<UserEntity> getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }

@@ -17,19 +17,28 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Пользовательский атрибут ошибки для обработки и форматирования исключений.
+ */
 @Component
 public class AppErrorAttributes extends DefaultErrorAttributes {
+
+    /**
+     * Статус ошибки, который будет установлен в соответствии с типом исключения.
+     */
     private HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
-    public AppErrorAttributes() {
-        super();
-    }
-
+    /**
+     * Переопределенный метод для получения атрибутов ошибки.
+     *
+     * @param request Запрос сервера
+     * @param options Варианты атрибутов ошибки
+     * @return Map объект с атрибутами ошибки
+     */
     @Override
     public Map<String, Object> getErrorAttributes(ServerRequest request, ErrorAttributeOptions options) {
         var errorAttributes = super.getErrorAttributes(request, ErrorAttributeOptions.defaults());
         var error = getError(request);
-
         var errorList = new ArrayList<Map<String, Object>>();
 
         if (error instanceof AuthException || error instanceof UnauthorizedException
@@ -48,9 +57,9 @@ public class AppErrorAttributes extends DefaultErrorAttributes {
         } else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             var message = error.getMessage();
-            if (message == null)
+            if (message == null) {
                 message = error.getClass().getName();
-
+            }
             var errorMap = new LinkedHashMap<String, Object>();
             errorMap.put("code", "INTERNAL_ERROR");
             errorMap.put("message", message);

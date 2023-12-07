@@ -14,14 +14,31 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.RouterFunctions;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
+/**
+ * Пользовательский обработчик веб-ошибок и форматирования ошибок.
+ */
 @Component
 public class AppErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
-    public AppErrorWebExceptionHandler(AppErrorAttributes g, ApplicationContext applicationContext, ServerCodecConfigurer serverCodecConfigurer) {
-        super(g, new WebProperties.Resources(), applicationContext);
+
+    /**
+     * Конструктор класса AppErrorWebExceptionHandler.
+     *
+     * @param errorAttributes атрибуты ошибки
+     * @param applicationContext контекст приложения
+     * @param serverCodecConfigurer конфигуратор серверного кодека
+     */
+    public AppErrorWebExceptionHandler(AppErrorAttributes errorAttributes, ApplicationContext applicationContext, ServerCodecConfigurer serverCodecConfigurer) {
+        super(errorAttributes, new WebProperties.Resources(), applicationContext);
         super.setMessageWriters(serverCodecConfigurer.getWriters());
         super.setMessageReaders(serverCodecConfigurer.getReaders());
     }
 
+    /**
+     * Метод для создания маршрутизации обработки ошибок.
+     *
+     * @param errorAttributes атрибуты ошибки
+     * @return RouterFunction объект, представляющий маршрут обработки ошибок
+     */
     @Override
     protected RouterFunction<ServerResponse> getRoutingFunction(final ErrorAttributes errorAttributes) {
         return RouterFunctions.route(RequestPredicates.all(), request -> {

@@ -13,6 +13,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+/**
+ * Контроллер для обработки запросов аутентификации и авторизации.
+ */
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
@@ -22,6 +25,12 @@ public class AuthRestControllerV1 {
     private final UserService userService;
     private final UserMapper userMapper;
 
+    /**
+     * Метод для регистрации нового пользователя.
+     *
+     * @param dto данные пользователя
+     * @return объект Mono, представляющий зарегистрированного пользователя
+     */
     @PostMapping("/register")
     public Mono<UserDto> register(@RequestBody UserDto dto) {
         UserEntity entity = userMapper.mapDto2Entity(dto);
@@ -29,6 +38,12 @@ public class AuthRestControllerV1 {
                 .map(userMapper::mapEntity2Dto);
     }
 
+    /**
+     * Метод для входа пользователя в систему.
+     *
+     * @param requestDto данные для аутентификации
+     * @return объект Mono, представляющий данные аутентификации пользователя
+     */
     @PostMapping("/login")
     public Mono<AuthResponseDto> login(@RequestBody AuthRequestDto requestDto) {
         return securityService.authenticate(requestDto.getUsername(), requestDto.getPassword())
@@ -42,6 +57,12 @@ public class AuthRestControllerV1 {
                 ));
     }
 
+    /**
+     * Метод для получения информации о текущем пользователе.
+     *
+     * @param authentication данные аутентификации пользователя
+     * @return объект Mono, представляющий информацию о пользователе
+     */
     @GetMapping("/info")
     public Mono<UserDto> getUserInfo(Authentication authentication) {
         CustomPrincipal customPrincipal = (CustomPrincipal) authentication.getPrincipal();

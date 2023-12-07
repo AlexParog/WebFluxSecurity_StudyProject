@@ -8,8 +8,17 @@ import reactor.core.publisher.Mono;
 
 import java.util.List;
 
+/**
+ * Утилитарный класс для создания аутентификации пользователя на основе результатов проверки JWT токена.
+ */
 public class UserAuthenticationBearer {
 
+    /**
+     * Создает аутентификацию пользователя на основе результатов проверки JWT токена.
+     *
+     * @param verificationResult результат проверки токена доступа
+     * @return Mono с деталями аутентификации пользователя
+     */
     public static Mono<Authentication> create(JwtHandler.VerificationResult verificationResult) {
         Claims claims = verificationResult.claims;
         String subject = claims.getSubject();
