@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Table("users")
 public class UserEntity {
     @Id
-    private Long id;
+    private Long userId;
     private String username;
     private String password;
     private UserRole role;
@@ -21,7 +21,7 @@ public class UserEntity {
     private String lastName;
     private boolean enabled;
     private LocalDateTime created_at;
-    private LocalDateTime update_at;
+    private LocalDateTime updated_at;
 
     @ToString.Include(name = "password")
     private String maskPassword() {
